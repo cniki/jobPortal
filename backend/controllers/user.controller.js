@@ -14,9 +14,9 @@ export const register = async (req, res) => {
                 success: false
             });
         };
-        const file = req.file;
-        const fileUri = getDataUri(file);
-        const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+        // const file = req.file;
+        // const fileUri = getDataUri(file);
+        // const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
 
         const user = await User.findOne({ email });
         if (user) {
@@ -33,9 +33,9 @@ export const register = async (req, res) => {
             phoneNumber,
             password: hashedPassword,
             role,
-            profile:{
-                profilePhoto:cloudResponse.secure_url,
-            }
+            // profile:{
+            //     profilePhoto:cloudResponse.secure_url,
+            // }
         });
 
         return res.status(201).json({
@@ -48,7 +48,13 @@ export const register = async (req, res) => {
 }
 export const login = async (req, res) => {
     try {
+
         const { email, password, role } = req.body;
+
+         
+
+           
+
         
         if (!email || !password || !role) {
             return res.status(400).json({
@@ -56,22 +62,35 @@ export const login = async (req, res) => {
                 success: false
             });
         };
+           
         let user = await User.findOne({ email });
+
+     
         if (!user) {
+         
             return res.status(400).json({
                 message: "Incorrect email or password.",
                 success: false,
             })
         }
+         
         const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+       
+
+
         if (!isPasswordMatch) {
+            
             return res.status(400).json({
                 message: "Incorrect email or password.",
                 success: false,
             })
         };
         // check role is correct or not
+         
+
         if (role !== user.role) {
+            
             return res.status(400).json({
                 message: "Account doesn't exist with current role.",
                 success: false
@@ -81,18 +100,21 @@ export const login = async (req, res) => {
         const tokenData = {
             userId: user._id
         }
+           
         const token = await jwt.sign(tokenData, process.env.SECRET_KEY, { expiresIn: '1d' });
-
+  
         user = {
             _id: user._id,
             fullname: user.fullname,
             email: user.email,
             phoneNumber: user.phoneNumber,
             role: user.role,
-            profile: user.profile
+            // profile: user.profile
         }
+        
 
-        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpsOnly: true, sameSite: 'strict' }).json({
+
+        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'strict' }).json({
             message: `Welcome back ${user.fullname}`,
             user,
             success: true
@@ -101,6 +123,8 @@ export const login = async (req, res) => {
         console.log(error);
     }
 }
+
+
 export const logout = async (req, res) => {
     try {
         return res.status(200).cookie("token", "", { maxAge: 0 }).json({

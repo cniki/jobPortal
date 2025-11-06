@@ -20,7 +20,7 @@ const Signup = () => {
         phoneNumber: "",
         password: "",
         role: "",
-        file: ""
+        // file: ""
     });
     const {loading,user} = useSelector(store=>store.auth);
     const dispatch = useDispatch();
@@ -40,9 +40,9 @@ const Signup = () => {
         formData.append("phoneNumber", input.phoneNumber);
         formData.append("password", input.password);
         formData.append("role", input.role);
-        if (input.file) {
-            formData.append("file", input.file);
-        }
+        // if (input.file) {
+        //     formData.append("file", input.file);
+        // }
 
         try {
             dispatch(setLoading(true));
@@ -138,7 +138,7 @@ const Signup = () => {
                                 <Label htmlFor="r2">Recruiter</Label>
                             </div>
                         </RadioGroup>
-                        <div className='flex items-center gap-2'>
+                        {/* <div className='flex items-center gap-2'>
                             <Label>Profile</Label>
                             <Input
                                 accept="image/*"
@@ -146,7 +146,7 @@ const Signup = () => {
                                 onChange={changeFileHandler}
                                 className="cursor-pointer"
                             />
-                        </div>
+                        </div> */}
                     </div>
                     {
                         loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Signup</Button>
